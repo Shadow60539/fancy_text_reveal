@@ -1,6 +1,6 @@
 name: fancy_text_reveal
 description: A package for text reveal.
-version: 0.0.1
+version: 0.0.1+1
 homepage: 'https://github.com/Shadow60539/fancy_text_reveal'
 
 environment:
