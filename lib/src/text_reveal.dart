@@ -1,14 +1,25 @@
 import 'package:fancy_text_reveal/fancy_text_reveal.dart';
 import 'package:flutter/material.dart';
 
+/// ```Example Usecase
+/// @override
+Widget build(BuildContext context) {
+  return FancyTextReveal(child: Text('You are Awesome!'));
+}
+
+/// ```
+
+///[FancyTextReveal] to add fancy text reveal animation.
 class FancyTextReveal extends StatefulWidget {
+  ///[child] that has to be shown after the reveal animation.
   final Widget child;
 
+  ///[properties] for customizing the properties of the [FancyTextReveal]
   final Properties properties;
 
   const FancyTextReveal(
-      {Key key,
-      @required this.child,
+      {Key? key,
+      required this.child,
       this.properties = const Properties(
         decoration: BoxDecoration(color: Colors.white),
       )})
@@ -20,11 +31,28 @@ class FancyTextReveal extends StatefulWidget {
 
 class _FancyTextRevealState extends State<FancyTextReveal>
     with SingleTickerProviderStateMixin {
-  AnimationController _animationController;
-  Animation<double> _animation;
+  ///The main AnimationController that drives the animation.
+  AnimationController? _animationController;
+
+  ///Animation thats responsible for animating between 0 and width of [child].
+  ///
+  ///The size of the [child] is measured in the very beginning and trigger
+  ///[_animationController] to start the animation.
+  Animation<double>? _animation;
+
+  ///To update the size of the [child] and use it as end parameter for [_animation].
+  ///
+  ///Initially size is set to Size(0.0,0.0)
   ValueNotifier<Size> _notifier = ValueNotifier(Size(0.0, 0.0));
+
+  ///Alignment of the [CrossFadeState]
+  ///
+  ///After one [AnimationStatus.completed] it is set to [Alignment.centerRight]
   Alignment _alignment = Alignment.centerLeft;
 
+  ///Toggle to stop the animation after finished.
+  ///
+  ///After the [_animationController] completes the forward and reverse animation.
   bool shouldStop = false;
 
   @override
@@ -37,10 +65,10 @@ class _FancyTextRevealState extends State<FancyTextReveal>
     super.initState();
   }
 
-  void _listener(status) {
+  void _listener(AnimationStatus status) {
     if (status == AnimationStatus.completed) {
       _alignment = Alignment.centerRight;
-      _animationController.reverse();
+      _animationController!.reverse();
       setState(() {
         shouldStop = true;
       });
@@ -49,7 +77,7 @@ class _FancyTextRevealState extends State<FancyTextReveal>
 
   @override
   void dispose() {
-    _animationController.dispose();
+    _animationController!.dispose();
     super.dispose();
   }
 
@@ -60,16 +88,16 @@ class _FancyTextRevealState extends State<FancyTextReveal>
           begin: 0.0,
           end: _notifier.value.width + widget.properties.horizontalSpacing)
       .animate(CurvedAnimation(
-          parent: _animationController, curve: Curves.fastOutSlowIn));
+          parent: _animationController!, curve: Curves.fastOutSlowIn));
 
   void _startAnimation() {
     if (_notifier.value.height != 0.0) {
-      _animation = _getAnimation;
+      _animation = _getAnimation as Animation<double>?;
 
-      //If start the animation if not.
-      if (_animationController.status == AnimationStatus.dismissed) {
+      //Start the animation if not.
+      if (_animationController!.status == AnimationStatus.dismissed) {
         if (!shouldStop) {
-          _animationController.forward();
+          _animationController!.forward();
         }
       }
     }
@@ -79,7 +107,7 @@ class _FancyTextRevealState extends State<FancyTextReveal>
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: Listenable.merge([_notifier, _animationController]),
-      builder: (BuildContext context, Widget _) {
+      builder: (BuildContext context, Widget? _) {
         _startAnimation();
         final _height = _notifier.value.height;
         final value = _animation?.value;
@@ -92,7 +120,7 @@ class _FancyTextRevealState extends State<FancyTextReveal>
               crossFadeState: _alignment == Alignment.centerRight
                   ? CrossFadeState.showFirst
                   : CrossFadeState.showSecond,
-              duration: _animationController.duration,
+              duration: _animationController!.duration!,
             ),
             Container(
               alignment: Alignment.center,
@@ -107,15 +135,25 @@ class _FancyTextRevealState extends State<FancyTextReveal>
   }
 }
 
+///Customization for [FancyTextReveal]
 class Properties {
-  final Decoration decoration;
+  ///For custom box decoration of the container.
+  ///
+  ///By default set to BoxDecoration(color: Colors.white)
+  final Decoration? decoration;
+
+  ///Duration of the animation.
   final int milliseconds;
+
+  ///For adding vertical padding to the container.
   final double verticalSpacing;
+
+  ///For adding horizontal padding to the container.
   final double horizontalSpacing;
 
   const Properties({
     this.decoration,
-    this.milliseconds = 400,
+    this.milliseconds = 800,
     this.verticalSpacing = 0.0,
     this.horizontalSpacing = 0.0,
   });
