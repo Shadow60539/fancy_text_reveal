@@ -1,6 +1,6 @@
 name: fancy_text_reveal
 description: Have you ever wondered if there is any fancy way to reveal your text widgets? Introducing fancy_text_reveal.
-version: 1.0.0
+version: 1.0.1
 homepage: 'https://github.com/Shadow60539/fancy_text_reveal'
 
 environment:

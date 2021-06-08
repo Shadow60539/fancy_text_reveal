@@ -1,3 +1,7 @@
+## [1.0.1]
+
+* Refactored code
+
 ## [1.0.0]
 
 * Migrated to null-safety
